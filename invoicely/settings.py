@@ -12,6 +12,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 
 import environ
 import os
+import subprocess
 
 env = environ.Env()
 
