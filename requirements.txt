@@ -37,5 +37,4 @@ tzdata==2022.1
 uritemplate==4.1.1
 urllib3==1.26.9
 whitenoise==6.0.0
-git+git://github.com/johnfraney/wkhtmltopdf-pack.git
-pdfkit==0.6.1
+wkhtmltopdf-pack-ng==0.12.3.0
