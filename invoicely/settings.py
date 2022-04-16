@@ -59,6 +59,7 @@ INSTALLED_APPS = [
     'rest_framework.authtoken',
     'corsheaders',
     'djoser',
+    'wkhtmltopdf',
 
     'apps.client.apps.ClientConfig',
     'apps.team.apps.TeamConfig',
