@@ -1,5 +1,5 @@
 import pdfkit
-
+import os, sys, subprocess, platform
 from django.core.exceptions import PermissionDenied
 from django.core.mail import EmailMultiAlternatives
 from django.http import HttpResponse
@@ -15,6 +15,15 @@ from .serializers import InvoiceSerializer, ItemSerializer
 from .models import Invoice, Item
 
 from apps.team.models import Team
+
+
+if platform.system() == "Windows":
+  pdfkit_config = pdfkit.configuration(wkhtmltopdf=os.environ.get('WKHTMLTOPDF_BINARY', 'C:\\Program Files\\wkhtmltopdf\\bin\\wkhtmltopdf.exe'))
+else:
+  os.environ['PATH'] += os.pathsep + os.path.dirname(sys.executable) 
+  WKHTMLTOPDF_CMD = subprocess.Popen(['which', os.environ.get('WKHTMLTOPDF_BINARY', 'wkhtmltopdf')], 
+      stdout=subprocess.PIPE).communicate()[0].strip()
+  pdfkit_config = pdfkit.configuration(wkhtmltopdf=WKHTMLTOPDF_CMD)
 
 
 class InvoiceViewSet(viewsets.ModelViewSet):
@@ -53,7 +62,8 @@ def generate_pdf(request, invoice_id):
 
   template = get_template(template_name)
   html = template.render({'invoice': invoice, 'team': team})
-  pdf = pdfkit.from_string(html, False, options={})
+  
+  pdf = pdfkit.from_string(html, False,options={}, configuration=pdfkit_config)
 
   response = HttpResponse(pdf, content_type="application/pdf")
   response['Content-Diposition'] = 'attachment: filename="invoice.pdf"'
@@ -78,7 +88,8 @@ def send_reminder(request, invoice_id):
 
   template = get_template('pdf.html')
   html = template.render({'invoice': invoice, 'team': team})
-  pdf = pdfkit.from_string(html, False,options={})
+  
+  pdf = pdfkit.from_string(html, False,options={}, configuration=pdfkit_config)
 
   if pdf:
     name = 'invoice_%s.pdf' % invoice.invoice_number

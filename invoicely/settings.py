@@ -179,13 +179,3 @@ CORS_ORIGIN_WHITELIST = [
 ALLOWED_HOSTS = [env('BACKEND_HOST'), '127.0.0.1']
 
 STATICFILES_STORAGE = "whitenoise.storage.CompressedManifestStaticFilesStorage"
-
-if 'DYNO' in os.environ:
-    print ('loading wkhtmltopdf path on heroku')
-    WKHTMLTOPDF_CMD = subprocess.Popen(
-        ['which', os.environ.get('WKHTMLTOPDF_BINARY', 'wkhtmltopdf-pack')], # Note we default to 'wkhtmltopdf' as the binary name
-        stdout=subprocess.PIPE).communicate()[0].strip()
-else:
-    print ('loading wkhtmltopdf path on localhost')
-    MYDIR = os.path.dirname(__file__)    
-    WKHTMLTOPDF_CMD = os.path.join(MYDIR + "/static/executables/bin/", "wkhtmltopdf.exe")
